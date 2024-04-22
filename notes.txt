@@ -1,0 +1,70 @@
+1- Pipelines can be added to apply transformation on the data before importing it into elastic search
+
+Example as shown below:
+PUT _ingest/pipeline/earthquake_data_pipeline
+{
+  "description": "- Remove unwanted fields\n- Convert the date in millis to formatted date\n- Correct the geopoint field",
+  "processors": [
+    {
+      "remove": {
+        "field": [
+          "updated",
+          "tz",
+          "detail",
+          "felt",
+          "cdi",
+          "mmi",
+          "alert",
+          "status",
+          "tsunami",
+          "net",
+          "code",
+          "ids",
+          "sources",
+          "types",
+          "nst",
+          "dmin",
+          "rms",
+          "gap",
+          "magType",
+          "title"
+        ],
+        "ignore_missing": true,
+        "if": "Removes updated\ntz\ndetail\nfelt\ncdi\nmmi\nalert\nstatus\ntsunami\nnet\ncode\nids\nsources\ntypes\nnst\ndmin\nrms\ngap\nmagType\ntitle\n",
+        "description": "Removes unwanted fields"
+      }
+    },
+    {
+      "date": {
+        "field": "time",
+        "formats": [
+          "UNIX_MS"
+        ],
+        "description": "Convert the time field into a @timestamp field"
+      }
+    },
+    {
+      "remove": {
+        "field": "time",
+        "ignore_missing": true,
+        "description": "removes the now useless time field"
+      }
+    },
+    {
+      "rename": {
+        "field": "latitude",
+        "target_field": "coordinates.lat",
+        "ignore_missing": true,
+        "description": "latitude -> coordinates.lat"
+      }
+    },
+    {
+      "rename": {
+        "field": "longitiude",
+        "target_field": "coordinates.lon",
+        "ignore_missing": true,
+        "description": "longitude -> coordinates.lon"
+      }
+    }
+  ]
+}

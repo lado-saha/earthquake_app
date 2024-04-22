@@ -1,0 +1,8 @@
+{
+  "elastic":{
+    "port": 9200,
+    "host": "localhost",
+    "protocol":"http",
+    "url": "http://localhost:9200"
+  }
+}
